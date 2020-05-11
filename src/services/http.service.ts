@@ -48,7 +48,7 @@ class HttpService {
     return outputUrl;
   }
 
-  private buildUrl(url: string, queryParams: IConfigInputField[] = [], rawData?: any): string {
+  private buildUrl(url: string, queryParams: IConfigInputField[] = [], headers:{[k: string]:string} , rawData?: any): string {
     if (!queryParams || !queryParams.length) {
       return this.replaceParamsInUrl(url, rawData);
     }
@@ -61,12 +61,22 @@ class HttpService {
         continue;
       }
 
+      //eslint-disable-next-line
+      Object.entries(headers).map(([key, value]) => {
+        if (value.includes(":"+param.name)){
+          headers[key] = headers[key].replace(":"+ param.name, param.value);
+        }
+      })
+
       // TODO: Add docs to "urlReplaceOnly"
       if (param.urlReplaceOnly) {
         const urlParamName = `:${param.name}`;
         outputUrl = outputUrl.replace(urlParamName, param.value as string);
       } else {
-        params.push(`${param.name}=${param.value || ''}`);
+        if (url.includes(":"+param.name))
+          outputUrl = url.replace(":"+param.name, param.value);
+        else
+          params.push(`${param.name}=${param.value || ''}`);
       }
     }
 
@@ -80,7 +90,7 @@ class HttpService {
 
   private buildRequest(params: IFetchParams): { url: string, params: any } {
     const reqUrl: string = this.urlIsAbsolute(params.origUrl) ? params.origUrl : this.baseUrl + params.origUrl;
-    const finalUrl: string = this.buildUrl(reqUrl, params.queryParams, params.rawData);
+    const finalUrl: string = this.buildUrl(reqUrl, params.queryParams, params.headers, params.rawData);
     const requestParams = {
       method: params.method ? params.method.toUpperCase() : 'GET',
       headers: Object.assign({}, this.requestHeaders, params.headers || {}),
