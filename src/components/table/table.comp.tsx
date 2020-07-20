@@ -16,6 +16,7 @@ interface IProps {
   callbacks: {
     delete: ((item: any) => void) | null
     put: ((item: any) => void) | null
+    details: ((item: any) => void) | null
     action: (item: any, action: IConfigCustomAction) => void
     getPreviousPage: (() => void) | null
     getNextPage: (() => void) | null
@@ -82,6 +83,12 @@ export const Table = ({ items, fields, pagination, callbacks, customActions, cus
         }
         <td>
           <div className="actions-wrapper">
+            {
+              callbacks.details &&
+              <Button onClick={() => callbacks.details?.(item)} title='Details'>
+                <i className="fa fa-search" aria-hidden="true"></i>
+              </Button>
+            }
             {
               callbacks.put &&
               <Button onClick={() => callbacks.put?.(item)} title={editLabel}>

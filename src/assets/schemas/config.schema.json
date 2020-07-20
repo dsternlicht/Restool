@@ -12,7 +12,13 @@
     "pages": {
       "type": "array",
       "items": {
-        "$ref": "#/definitions/page"
+        "$ref": "#/definitions/resource"
+      }
+    },
+    "resources": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/resource"
       }
     },
     "baseUrl": {
@@ -41,8 +47,7 @@
     }
   },
   "required": [
-    "name",
-    "pages"
+    "name"
   ],
   "definitions": {
     "errorMessageDataPath": {
@@ -104,13 +109,13 @@
         }
       }
     },
-    "page": {
+    "resource": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
         "name": {
           "type": "string",
-          "description": "The name of the page. This will be presented in the menu."
+          "description": "The name of the resource. This will be presented in the menu."
         },
         "id": {
           "type": "string",
@@ -126,6 +131,12 @@
         "methods": {
           "$ref": "#/definitions/methods"
         },
+        "subResources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/subResource"
+          }
+        },
         "customActions": {
           "type": "array",
           "items": {
@@ -140,6 +151,16 @@
       "required": [
         "name",
         "id"
+      ]
+    },
+    "subResource": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/resource"
+        },
+        {
+          "properties": {}
+        }
       ]
     },
     "requestHeaders": {
@@ -221,7 +242,7 @@
             },
             "dataPath": {
               "type": "string",
-              "description": "TODO"
+              "description": "Let us know where we should take the data from"
             },
             "display": {
               "type": "object",
@@ -458,7 +479,6 @@
         }
       },
       "required": [
-        "name",
         "type"
       ]
     },
